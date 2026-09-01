@@ -1,0 +1,46 @@
+{
+  "title": "Microservices Overview",
+  "uid": "microservices-overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "User Service Request Duration",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(user_service_http_request_duration_seconds_sum[1m]) / rate(user_service_http_request_duration_seconds_count[1m])",
+          "legendFormat": "avg duration"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Product Service Request Duration",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(product_service_http_request_duration_seconds_sum[1m]) / rate(product_service_http_request_duration_seconds_count[1m])",
+          "legendFormat": "avg duration"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Order Service Request Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(order_service_requests_total[1m])",
+          "legendFormat": "{{method}} {{endpoint}}"
+        }
+      ]
+    }
+  ]
+}

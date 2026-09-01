@@ -1,0 +1,137 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_USERNAME = "${DOCKERHUB_CREDENTIALS_USR}"
+        DOCKERHUB_TOKEN = "${DOCKERHUB_CREDENTIALS_PSW}"
+    }
+
+    parameters {
+        choice(name: 'SERVICE', choices: ['all', 'user-service', 'product-service', 'order-service'], description: 'Service to build')
+        booleanParam(name: 'PUSH_IMAGE', defaultValue: false, description: 'Push image to Docker Hub')
+        booleanParam(name: 'RUN_TRIVY', defaultValue: true, description: 'Run Trivy security scan')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Test Services') {
+            parallel {
+                stage('User Service') {
+                    when {
+                        expression { params.SERVICE == 'all' || params.SERVICE == 'user-service' }
+                    }
+                    steps {
+                        dir('services/user-service') {
+                            sh 'npm install'
+                            sh 'npm test'
+                        }
+                    }
+                }
+                stage('Product Service') {
+                    when {
+                        expression { params.SERVICE == 'all' || params.SERVICE == 'product-service' }
+                    }
+                    steps {
+                        dir('services/product-service') {
+                            sh 'npm install'
+                            sh 'npm test'
+                        }
+                    }
+                }
+                stage('Order Service') {
+                    when {
+                        expression { params.SERVICE == 'all' || params.SERVICE == 'order-service' }
+                    }
+                    steps {
+                        dir('services/order-service') {
+                            sh 'pip install -r requirements.txt'
+                            sh 'python -m pytest -v'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    def services = []
+                    if (params.SERVICE == 'all') {
+                        services = ['user-service', 'product-service', 'order-service']
+                    } else {
+                        services = [params.SERVICE]
+                    }
+
+                    for (svc in services) {
+                        sh "docker build -t ${DOCKERHUB_USERNAME}/${svc}:${env.BUILD_NUMBER} services/${svc}"
+                        sh "docker tag ${DOCKERHUB_USERNAME}/${svc}:${env.BUILD_NUMBER} ${DOCKERHUB_USERNAME}/${svc}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Trivy Security Scan') {
+            when {
+                expression { params.RUN_TRIVY }
+            }
+            steps {
+                script {
+                    def services = []
+                    if (params.SERVICE == 'all') {
+                        services = ['user-service', 'product-service', 'order-service']
+                    } else {
+                        services = [params.SERVICE]
+                    }
+
+                    for (svc in services) {
+                        sh """
+                            trivy image --severity CRITICAL,HIGH --exit-code 1 \
+                                ${DOCKERHUB_USERNAME}/${svc}:${env.BUILD_NUMBER}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            when {
+                expression { params.PUSH_IMAGE }
+            }
+            steps {
+                script {
+                    def services = []
+                    if (params.SERVICE == 'all') {
+                        services = ['user-service', 'product-service', 'order-service']
+                    } else {
+                        services = [params.SERVICE]
+                    }
+
+                    sh "echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+
+                    for (svc in services) {
+                        sh "docker push ${DOCKERHUB_USERNAME}/${svc}:${env.BUILD_NUMBER}"
+                        sh "docker push ${DOCKERHUB_USERNAME}/${svc}:latest"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
+        }
+    }
+}
