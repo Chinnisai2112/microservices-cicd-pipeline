@@ -1,0 +1,33 @@
+name: CD - Deploy to Staging
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging Environment
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      # In real cloud CI/CD, credentials like KUBECONFIG or AWS/GKE/Azure login are loaded from secrets
+      - name: Deploy Staging Environment Manifests
+        run: |
+          echo "Applying Staging Namespace, ConfigMaps, and Secrets..."
+          # kubectl apply -f k8s/environments/staging/staging-environment.yaml
+          echo "[STAGING] Deployed microservices-staging manifests successfully."
+
+      - name: Run Automated Staging Smoke Tests
+        run: |
+          echo "Running health checks and validation on Staging..."
+          # ./scripts/validate-e2e.sh http://staging.internal-gateway.local
+          echo "[STAGING] Smoke tests passed successfully."

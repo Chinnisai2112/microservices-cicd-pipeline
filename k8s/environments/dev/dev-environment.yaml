@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microservices-dev
+  labels:
+    environment: development
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-global-config
+  namespace: microservices-dev
+data:
+  NODE_ENV: "development"
+  LOG_LEVEL: "debug"
+  ENABLE_SWAGGER: "true"
