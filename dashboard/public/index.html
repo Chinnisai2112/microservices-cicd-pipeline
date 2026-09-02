@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudCommerce | Microservices Architecture & DevOps Operations Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background Glows -->
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-box">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">CloudCommerce <span class="badge-accent">OS</span></span>
+          <span class="logo-sub">Enterprise Microservices & CI/CD Control Plane</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="cluster-status-pill" id="clusterStatusPill">
+        <span class="pulse-dot"></span>
+        <span id="clusterStatusText">Cluster Status: Syncing...</span>
+      </div>
+      <div class="gateway-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+        <span>Gateway :8080</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="btn-icon" id="btnRefreshAll" title="Refresh All Data">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+        <span>Refresh</span>
+      </button>
+      <div class="badge-env">DEV / K8s READY</div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs -->
+  <nav class="main-tabs">
+    <div class="tab-list">
+      <button class="tab-btn active" data-tab="overview">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Topology & Health
+      </button>
+      <button class="tab-btn" data-tab="users">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        User Service (:3001)
+      </button>
+      <button class="tab-btn" data-tab="products">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        Product Catalog (:3002)
+      </button>
+      <button class="tab-btn" data-tab="orders">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        Order Service (:8000)
+      </button>
+      <button class="tab-btn" data-tab="cicd">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        CI/CD & DevOps Pipeline
+      </button>
+    </div>
+  </nav>
+
+  <!-- App Content Container -->
+  <main class="app-container">
+
+    <!-- ==================== TAB 1: OVERVIEW & TOPOLOGY ==================== -->
+    <section class="tab-content active" id="tab-overview">
+      <!-- Quick Metric Counters -->
+      <div class="metrics-grid">
+        <div class="metric-card glass-card">
+          <div class="metric-header">
+            <span class="metric-title">Active Services</span>
+            <div class="metric-icon-wrap icon-blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metricActiveServices">3 / 3</div>
+          <div class="metric-footer positive">🟢 All Microservices Healthy</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-header">
+            <span class="metric-title">Registered Users</span>
+            <div class="metric-icon-wrap icon-purple">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metricTotalUsers">0</div>
+          <div class="metric-footer">User Service store</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-header">
+            <span class="metric-title">Products in Catalog</span>
+            <div class="metric-icon-wrap icon-amber">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metricTotalProducts">0</div>
+          <div class="metric-footer">Product Service catalog</div>
+        </div>
+
+        <div class="metric-card glass-card">
+          <div class="metric-header">
+            <span class="metric-title">Processed Orders</span>
+            <div class="metric-icon-wrap icon-green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metricTotalOrders">0</div>
+          <div class="metric-footer" id="metricTotalRevenue">$0.00 Total GMV</div>
+        </div>
+      </div>
+
+      <!-- Service Health Nodes -->
+      <h2 class="section-title">Microservices Architecture & Real-Time Topology</h2>
+      <div class="services-status-grid">
+        <!-- User Service Node -->
+        <div class="service-card glass-card" id="card-user-service">
+          <div class="service-card-top">
+            <div class="service-badge node-node">Node.js Express</div>
+            <div class="status-indicator-tag" id="tag-user-service"><span class="status-dot"></span> Checking...</div>
+          </div>
+          <h3 class="service-name">User Service</h3>
+          <p class="service-desc">Manages user identities, authentication context, and profiles.</p>
+          <div class="service-meta">
+            <div class="meta-item"><span class="meta-label">Port:</span> <span class="meta-val code-val">3001</span></div>
+            <div class="meta-item"><span class="meta-label">Route:</span> <span class="meta-val code-val">/api/users</span></div>
+            <div class="meta-item"><span class="meta-label">Metrics:</span> <span class="meta-val code-val">/metrics</span></div>
+          </div>
+          <div class="service-action-bar">
+            <button class="btn-sm btn-outline" onclick="testHealth(3001, 'user-service')">Ping Health</button>
+            <a href="http://localhost:3001/api/users" target="_blank" class="btn-sm btn-subtle">Raw JSON ↗</a>
+          </div>
+        </div>
+
+        <!-- Product Service Node -->
+        <div class="service-card glass-card" id="card-product-service">
+          <div class="service-card-top">
+            <div class="service-badge node-node">Node.js Express</div>
+            <div class="status-indicator-tag" id="tag-product-service"><span class="status-dot"></span> Checking...</div>
+          </div>
+          <h3 class="service-name">Product Service</h3>
+          <p class="service-desc">Product catalog management, pricing metadata, and category index.</p>
+          <div class="service-meta">
+            <div class="meta-item"><span class="meta-label">Port:</span> <span class="meta-val code-val">3002</span></div>
+            <div class="meta-item"><span class="meta-label">Route:</span> <span class="meta-val code-val">/api/products</span></div>
+            <div class="meta-item"><span class="meta-label">Metrics:</span> <span class="meta-val code-val">/metrics</span></div>
+          </div>
+          <div class="service-action-bar">
+            <button class="btn-sm btn-outline" onclick="testHealth(3002, 'product-service')">Ping Health</button>
+            <a href="http://localhost:3002/api/products" target="_blank" class="btn-sm btn-subtle">Raw JSON ↗</a>
+          </div>
+        </div>
+
+        <!-- Order Service Node -->
+        <div class="service-card glass-card" id="card-order-service">
+          <div class="service-card-top">
+            <div class="service-badge node-python">Python FastAPI</div>
+            <div class="status-indicator-tag" id="tag-order-service"><span class="status-dot"></span> Checking...</div>
+          </div>
+          <h3 class="service-name">Order Service</h3>
+          <p class="service-desc">Orchestrates orders with cross-service RPC calls to User & Product services.</p>
+          <div class="service-meta">
+            <div class="meta-item"><span class="meta-label">Port:</span> <span class="meta-val code-val">8000</span></div>
+            <div class="meta-item"><span class="meta-label">Route:</span> <span class="meta-val code-val">/api/orders</span></div>
+            <div class="meta-item"><span class="meta-label">Swagger UI:</span> <span class="meta-val code-val">/docs</span></div>
+          </div>
+          <div class="service-action-bar">
+            <button class="btn-sm btn-outline" onclick="testHealth(8000, 'order-service')">Ping Health</button>
+            <a href="http://localhost:8000/docs" target="_blank" class="btn-sm btn-subtle">Swagger UI ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Architecture Visual Diagram -->
+      <div class="glass-card diagram-box">
+        <div class="diagram-header">
+          <h3>Interactive System Topology & Communication Flow</h3>
+          <span class="diagram-subtitle">Click nodes to inspect service details</span>
+        </div>
+        <div class="topology-canvas">
+          <div class="topo-node client-node">
+            <div class="node-icon">💻</div>
+            <div class="node-title">Web Client / Browser</div>
+            <div class="node-sub">Port 8080</div>
+          </div>
+
+          <div class="topo-arrow"><div class="arrow-line"><span class="pulse-packet"></span></div><span class="arrow-label">REST / HTTP</span></div>
+
+          <div class="topo-node gateway-node">
+            <div class="node-icon">🛡️</div>
+            <div class="node-title">API Gateway / Nginx</div>
+            <div class="node-sub">Reverse Proxy :8080</div>
+          </div>
+
+          <div class="topo-branches">
+            <div class="topo-branch">
+              <div class="branch-arrow"><div class="arrow-line vert"></div></div>
+              <div class="topo-node sub-node node-user" onclick="switchTab('users')">
+                <div class="node-icon">👤</div>
+                <div class="node-title">User Service</div>
+                <div class="node-sub">:3001 | Node.js</div>
+              </div>
+            </div>
+
+            <div class="topo-branch">
+              <div class="branch-arrow"><div class="arrow-line vert"></div></div>
+              <div class="topo-node sub-node node-product" onclick="switchTab('products')">
+                <div class="node-icon">🛍️</div>
+                <div class="node-title">Product Service</div>
+                <div class="node-sub">:3002 | Node.js</div>
+              </div>
+            </div>
+
+            <div class="topo-branch">
+              <div class="branch-arrow"><div class="arrow-line vert"></div></div>
+              <div class="topo-node sub-node node-order" onclick="switchTab('orders')">
+                <div class="node-icon">📦</div>
+                <div class="node-title">Order Service</div>
+                <div class="node-sub">:8000 | FastAPI</div>
+                <div class="cross-talk-badge">Cross-Service Client</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: USER SERVICE ==================== -->
+    <section class="tab-content" id="tab-users">
+      <div class="section-toolbar">
+        <div>
+          <h2 class="section-title">User Management Microservice</h2>
+          <p class="section-subtitle">Endpoint: <code class="code-val">GET /api/users</code>, <code class="code-val">POST /api/users</code>, <code class="code-val">DELETE /api/users/:id</code></p>
+        </div>
+        <button class="btn-primary" onclick="openModal('modalCreateUser')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add New User
+        </button>
+      </div>
+
+      <div class="users-grid" id="usersGrid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- JSON Inspector Box -->
+      <div class="glass-card api-inspector">
+        <div class="inspector-header">
+          <span class="inspector-title">📄 Raw API Response (<code id="usersApiUrl">/api/users</code>)</span>
+          <button class="btn-sm btn-subtle" onclick="copyUsersJson()">Copy JSON</button>
+        </div>
+        <pre class="code-block" id="usersJsonBlock">// Loading JSON data...</pre>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: PRODUCT CATALOG ==================== -->
+    <section class="tab-content" id="tab-products">
+      <div class="section-toolbar">
+        <div>
+          <h2 class="section-title">Product Catalog Microservice</h2>
+          <p class="section-subtitle">Endpoint: <code class="code-val">GET /api/products</code>, <code class="code-val">POST /api/products</code>, <code class="code-val">DELETE /api/products/:id</code></p>
+        </div>
+        <div class="toolbar-actions">
+          <select class="select-input" id="filterProductCategory" onchange="filterProducts()">
+            <option value="all">All Categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Audio">Audio</option>
+            <option value="Wearables">Wearables</option>
+          </select>
+          <button class="btn-primary" onclick="openModal('modalCreateProduct')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add New Product
+          </button>
+        </div>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- JSON Inspector Box -->
+      <div class="glass-card api-inspector">
+        <div class="inspector-header">
+          <span class="inspector-title">📄 Raw API Response (<code id="productsApiUrl">/api/products</code>)</span>
+          <button class="btn-sm btn-subtle" onclick="copyProductsJson()">Copy JSON</button>
+        </div>
+        <pre class="code-block" id="productsJsonBlock">// Loading JSON data...</pre>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: ORDER SERVICE & CHECKOUT ==================== -->
+    <section class="tab-content" id="tab-orders">
+      <div class="orders-layout">
+        <!-- Order Creation Panel -->
+        <div class="glass-card checkout-card">
+          <div class="checkout-header">
+            <h3>⚡ Live Cross-Service Checkout Studio</h3>
+            <p>Creates an order by validating User ID with <code>User-Service (:3001)</code> and fetching items from <code>Product-Service (:3002)</code>.</p>
+          </div>
+
+          <form id="formCreateOrder" onsubmit="handleCreateOrder(event)">
+            <div class="form-group">
+              <label for="orderUserSelect">1. Select Purchasing User</label>
+              <select id="orderUserSelect" class="form-control" required>
+                <option value="">-- Choose User --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>2. Select Items to Purchase</label>
+              <div class="order-items-builder" id="orderItemsBuilder">
+                <!-- Product Rows -->
+              </div>
+              <button type="button" class="btn-sm btn-subtle mt-2" onclick="addOrderItemRow()">+ Add Another Item</button>
+            </div>
+
+            <div class="order-summary-box">
+              <div class="summary-line"><span>Items Subtotal:</span> <span id="checkoutSubtotal">$0.00</span></div>
+              <div class="summary-line"><span>Estimated Tax:</span> <span>$0.00</span></div>
+              <div class="summary-line total"><span>Grand Total:</span> <span id="checkoutTotal">$0.00</span></div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block btn-lg" id="btnPlaceOrder">
+              🚀 Dispatch Cross-Service Order
+            </button>
+          </form>
+        </div>
+
+        <!-- Orders History & Live Feed -->
+        <div class="orders-feed">
+          <div class="section-toolbar mb-3">
+            <h3>Dispatched Orders History</h3>
+            <span class="badge-accent" id="ordersCountBadge">0 Orders</span>
+          </div>
+
+          <div class="orders-list" id="ordersList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: CI/CD & DEVOPS ==================== -->
+    <section class="tab-content" id="tab-cicd">
+      <div class="section-toolbar">
+        <div>
+          <h2 class="section-title">Automated CI/CD Pipeline & Orchestration Architecture</h2>
+          <p class="section-subtitle">Demonstrates GitHub Actions, Trivy Security Scans, Docker Hub Containerization, and Kubernetes Blue-Green Deployment.</p>
+        </div>
+        <button class="btn-accent" onclick="runPipelineSimulation()">
+          ▶ Run Interactive Pipeline Demo
+        </button>
+      </div>
+
+      <!-- Pipeline Stages Visualizer -->
+      <div class="glass-card pipeline-card">
+        <h3 class="mb-3">Automated Delivery Pipeline Stages</h3>
+        <div class="pipeline-flow" id="pipelineFlow">
+          <div class="pipeline-step step-complete" id="pipe-step-1">
+            <div class="step-status-icon">✓</div>
+            <div class="step-content">
+              <div class="step-name">1. Code Lint & Quality</div>
+              <div class="step-details">ESLint & PyTest Syntax Verification</div>
+              <div class="step-tag">GitHub Actions</div>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-step step-complete" id="pipe-step-2">
+            <div class="step-status-icon">✓</div>
+            <div class="step-content">
+              <div class="step-name">2. Unit & Integration Tests</div>
+              <div class="step-details">Node Test Runner & FastAPI PyTest</div>
+              <div class="step-tag">100% Pass</div>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-step step-complete" id="pipe-step-3">
+            <div class="step-status-icon">✓</div>
+            <div class="step-content">
+              <div class="step-name">3. Security Vulnerability Scan</div>
+              <div class="step-details">Trivy Container & Dependency Scan</div>
+              <div class="step-tag">0 Critical CVEs</div>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-step step-complete" id="pipe-step-4">
+            <div class="step-status-icon">✓</div>
+            <div class="step-content">
+              <div class="step-name">4. Docker Image Build & Push</div>
+              <div class="step-details">Multi-arch Docker Hub Registry Push</div>
+              <div class="step-tag">Registry Synced</div>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">➔</div>
+
+          <div class="pipeline-step step-complete" id="pipe-step-5">
+            <div class="step-status-icon">✓</div>
+            <div class="step-content">
+              <div class="step-name">5. K8s Blue-Green Deployment</div>
+              <div class="step-details">Zero-Downtime Traffic Switch & HPA</div>
+              <div class="step-tag">Active Live</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Specs Cards -->
+      <div class="cicd-specs-grid">
+        <div class="glass-card spec-card">
+          <h4>🐳 Containerization Specs</h4>
+          <ul class="spec-list">
+            <li><strong>User Service:</strong> <code>chinnisai2112/user-service:latest</code></li>
+            <li><strong>Product Service:</strong> <code>chinnisai2112/product-service:latest</code></li>
+            <li><strong>Order Service:</strong> <code>chinnisai2112/order-service:latest</code></li>
+            <li><strong>Base Images:</strong> <code>node:20-alpine</code>, <code>python:3.11-slim</code></li>
+          </ul>
+        </div>
+
+        <div class="glass-card spec-card">
+          <h4>☸️ Kubernetes Infrastructure</h4>
+          <ul class="spec-list">
+            <li><strong>Namespace:</strong> <code>microservices</code></li>
+            <li><strong>Deployments:</strong> Blue-Green & Canary Rollouts</li>
+            <li><strong>Autoscaling:</strong> HPA with CPU/Memory thresholds</li>
+            <li><strong>Ingress/Gateway:</strong> Nginx API Gateway reverse proxy</li>
+          </ul>
+        </div>
+
+        <div class="glass-card spec-card">
+          <h4>📊 Monitoring & Observability</h4>
+          <ul class="spec-list">
+            <li><strong>Prometheus:</strong> Scrapes <code>:3001</code>, <code>:3002</code>, <code>:8000</code></li>
+            <li><strong>Grafana:</strong> Dashboards at <code>http://localhost:3000</code></li>
+            <li><strong>Metrics:</strong> <code>http_request_duration_seconds</code>, <code>requests_total</code></li>
+            <li><strong>Alerts:</strong> Configured in <code>alert-rules.yml</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal: Create User -->
+  <div class="modal-overlay" id="modalCreateUser">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Create New User</h3>
+        <button class="modal-close" onclick="closeModal('modalCreateUser')">×</button>
+      </div>
+      <form onsubmit="handleCreateUser(event)">
+        <div class="form-group">
+          <label for="newUserName">Full Name</label>
+          <input type="text" id="newUserName" class="form-control" placeholder="e.g. Sarah Connor" required>
+        </div>
+        <div class="form-group">
+          <label for="newUserEmail">Email Address</label>
+          <input type="email" id="newUserEmail" class="form-control" placeholder="e.g. sarah@cyberdyne.io" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-subtle" onclick="closeModal('modalCreateUser')">Cancel</button>
+          <button type="submit" class="btn-primary">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create Product -->
+  <div class="modal-overlay" id="modalCreateProduct">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Add New Product</h3>
+        <button class="modal-close" onclick="closeModal('modalCreateProduct')">×</button>
+      </div>
+      <form onsubmit="handleCreateProduct(event)">
+        <div class="form-group">
+          <label for="newProductName">Product Name</label>
+          <input type="text" id="newProductName" class="form-control" placeholder="e.g. 4K Ultra Monitor" required>
+        </div>
+        <div class="form-group">
+          <label for="newProductPrice">Price ($ USD)</label>
+          <input type="number" id="newProductPrice" step="0.01" min="0.01" class="form-control" placeholder="e.g. 499.99" required>
+        </div>
+        <div class="form-group">
+          <label for="newProductCategory">Category</label>
+          <select id="newProductCategory" class="form-control" required>
+            <option value="Electronics">Electronics</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Audio">Audio</option>
+            <option value="Wearables">Wearables</option>
+            <option value="Peripherals">Peripherals</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-subtle" onclick="closeModal('modalCreateProduct')">Cancel</button>
+          <button type="submit" class="btn-primary">Add Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -25,7 +25,7 @@ echo "[PASSED] List Users"
 echo "Testing Create Product..."
 curl -s -f -X POST "$GATEWAY_URL/api/products" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Cloud Kubernetes Guide","price":29.99,"stock":100}' > /dev/null
+  -d '{"name":"Cloud Kubernetes Guide","price":29.99,"category":"Books","stock":100}' > /dev/null
 echo "[PASSED] Create Product"
 
 echo "Testing List Products..."
@@ -35,7 +35,7 @@ echo "[PASSED] List Products"
 echo "Testing Create Order..."
 curl -s -f -X POST "$GATEWAY_URL/api/orders" \
   -H "Content-Type: application/json" \
-  -d '{"userId":"1","productId":"1","quantity":2}' > /dev/null
+  -d '{"user_id":"1","items":[{"product_id":"1","quantity":2}]}' > /dev/null
 echo "[PASSED] Create Order"
 
 echo "Testing List Orders..."

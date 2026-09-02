@@ -17,6 +17,16 @@ const httpRequestDuration = new promClient.Histogram({
 app.use(express.json());
 
 app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+app.use((req, res, next) => {
   const end = httpRequestDuration.startTimer();
   res.on('finish', () => {
     end({ method: req.method, route: req.route?.path || req.path, status_code: res.statusCode });

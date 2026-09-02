@@ -37,11 +37,11 @@ $user = Test-Endpoint -Name "Create User" -Url "$GatewayUrl/api/users" -Method "
 Test-Endpoint -Name "List Users" -Url "$GatewayUrl/api/users"
 
 # 3. Product Service Endpoints
-$product = Test-Endpoint -Name "Create Product" -Url "$GatewayUrl/api/products" -Method "POST" -Body '{"name":"Cloud Kubernetes Guide","price":29.99,"stock":100}'
+$product = Test-Endpoint -Name "Create Product" -Url "$GatewayUrl/api/products" -Method "POST" -Body '{"name":"Cloud Kubernetes Guide","price":29.99,"category":"Books","stock":100}'
 Test-Endpoint -Name "List Products" -Url "$GatewayUrl/api/products"
 
 # 4. Order Service Endpoints
-Test-Endpoint -Name "Create Order" -Url "$GatewayUrl/api/orders" -Method "POST" -Body '{"userId":"1","productId":"1","quantity":2}'
+Test-Endpoint -Name "Create Order" -Url "$GatewayUrl/api/orders" -Method "POST" -Body '{"user_id":"1","items":[{"product_id":"1","quantity":2}]}'
 Test-Endpoint -Name "List Orders" -Url "$GatewayUrl/api/orders"
 
 Write-Host "`n========================================" -ForegroundColor Cyan

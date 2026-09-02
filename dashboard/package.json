@@ -1,0 +1,9 @@
+{
+  "name": "microservices-dashboard",
+  "version": "1.0.0",
+  "description": "Unified Web Dashboard and API Gateway for Microservices CI/CD Pipeline",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
